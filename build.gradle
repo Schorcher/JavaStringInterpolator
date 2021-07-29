@@ -1,0 +1,24 @@
+plugins {
+    id 'java'
+    id 'maven'
+    id 'maven-publish'
+    id 'idea'
+    id "io.freefair.lombok" version "5.3.3.3"
+}
+
+group 'com.github.schorcher.stringInterpolator'
+version '1.0-DEV'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile files("${System.getProperty('java.home')}/../lib/tools.jar")
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+test {
+    useJUnitPlatform()
+}
