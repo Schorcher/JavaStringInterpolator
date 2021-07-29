@@ -1,5 +1,6 @@
-package com.github.schorcher.stringInterpolator;
+package com.github.schorcher.stringInterpolator.expression;
 
+import com.github.schorcher.stringInterpolator.StringInterpolation;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.tree.TreeTranslator;
@@ -12,14 +13,14 @@ import java.util.function.Supplier;
 public class InnerStringVarsAstTranslator extends TreeTranslator {
 
     private final TreeMaker treeMaker;
-    private final Tokenizer tokenizer;
+    private final ExpUtil expUtil;
     private final ExpressionParser expressionParser;
 
     private boolean interpolate;
 
     public InnerStringVarsAstTranslator(Context context) {
         this.treeMaker = TreeMaker.instance(context);
-        this.tokenizer = new Tokenizer();
+        this.expUtil = new ExpUtil();
         this.expressionParser = new ExpressionParser(Names.instance(context));
     }
 
@@ -79,38 +80,38 @@ public class InnerStringVarsAstTranslator extends TreeTranslator {
         }
         if (jcLiteral.getValue() instanceof String) {
 
-            List<Token> tokens = tokenizer.split(jcLiteral);
+            List<Expression> expressions = expUtil.split(jcLiteral);
 
-            if (tokens.isEmpty()) {
+            if (expressions.isEmpty()) {
                 return;
             }
 
-            if (tokens.size() == 1) {
-                result = convertToExpression(tokens.get(0));
+            if (expressions.size() == 1) {
+                result = convertToExpression(expressions.get(0));
                 return;
             }
 
-            JCTree.JCExpression exprLeft = convertToExpression(tokens.get(0));
-            for (int i = 1; i < tokens.size(); i++) {
-                JCTree.JCExpression exprRight = convertToExpression(tokens.get(i));
+            JCTree.JCExpression exprLeft = convertToExpression(expressions.get(0));
+            for (int i = 1; i < expressions.size(); i++) {
+                JCTree.JCExpression exprRight = convertToExpression(expressions.get(i));
                 exprLeft = treeMaker.Binary(JCTree.Tag.PLUS, exprLeft, exprRight);
-                exprLeft.setPos(tokens.get(0).getOffset());
+                exprLeft.setPos(expressions.get(0).getOffset());
             }
 
             result = exprLeft;
         }
     }
 
-    private JCTree.JCExpression convertToExpression(Token token) {
-        switch (token.getTokenType()) {
+    private JCTree.JCExpression convertToExpression(Expression expression) {
+        switch (expression.getExpType()) {
             case EXPRESSION:
-                return expressionParser.parse(token);
+                return expressionParser.parse(expression);
             case STRING_LITERAL:
-                JCTree.JCLiteral literal = treeMaker.Literal(token.getValue());
-                literal.setPos(token.getOffset());
+                JCTree.JCLiteral literal = treeMaker.Literal(expression.getValue());
+                literal.setPos(expression.getOffset());
                 return literal;
             default:
-                throw new RuntimeException("Unexpected token type: " + token.getTokenType());
+                throw new RuntimeException("Unexpected token type: " + expression.getExpType());
         }
     }
 

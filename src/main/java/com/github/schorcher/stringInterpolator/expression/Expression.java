@@ -1,4 +1,4 @@
-package com.github.schorcher.stringInterpolator;
+package com.github.schorcher.stringInterpolator.expression;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -9,10 +9,10 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class Token {
+public class Expression {
 
     private final String value;
-    private final TokenType tokenType;
+    private final ExpType expType;
     private final int offset;
 
 }

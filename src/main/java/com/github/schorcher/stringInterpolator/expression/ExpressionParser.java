@@ -1,4 +1,4 @@
-package com.github.schorcher.stringInterpolator;
+package com.github.schorcher.stringInterpolator.expression;
 
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.tools.javac.api.JavacTaskImpl;
@@ -10,6 +10,8 @@ import javax.tools.*;
 import java.net.URI;
 import java.util.Collections;
 
+import static java.lang.String.format;
+
 public class ExpressionParser {
 
     private final Names names;
@@ -18,7 +20,7 @@ public class ExpressionParser {
         this.names = names;
     }
 
-    public JCTree.JCExpression parse(Token token) {
+    public JCTree.JCExpression parse(Expression token) {
         CompilationUnitTree tree = getCompilationUnitTree(token.getValue());
         JCTree.JCClassDecl declr = (JCTree.JCClassDecl) tree.getTypeDecls().get(0);
         JCTree.JCVariableDecl field = (JCTree.JCVariableDecl) declr.getMembers().get(0);
@@ -30,28 +32,23 @@ public class ExpressionParser {
 
     private CompilationUnitTree getCompilationUnitTree(String code) {
         JavaCompiler tool = ToolProvider.getSystemJavaCompiler();
-        JavaFileManager fm = tool.getStandardFileManager(null, null, null);
-        JavacTaskImpl ct = (JavacTaskImpl) tool.getTask(null,
-                fm,
-                null,
-                null,
-                null,
-                Collections.singletonList(new FakeJavaFileWrapper(code)));
+        JavaFileManager fileManager = tool.getStandardFileManager(null, null, null);
+        JavacTaskImpl task = (JavacTaskImpl) tool.getTask(null, fileManager, null, null, null,
+                Collections.singletonList(new TempClassWrapper(code)));
+
         try {
-            return ct.parse().iterator().next();
+            return task.parse().iterator().next();
         } catch (Exception e) {
-            // Depending on JDK version, `parse()` either throws or does not throw `IOException`;
-            // to avoid setup-dependent compilation errors, let's just catch Exception here.
             e.printStackTrace();
-            throw new RuntimeException("Error while parsing expression in the string literal: " + code, e);
+            throw new RuntimeException(format("Error parsing in string literal: %s", code), e);
         }
     }
 
-    private static class FakeJavaFileWrapper extends SimpleJavaFileObject {
+    private static class TempClassWrapper extends SimpleJavaFileObject {
 
         private final String text;
 
-        public FakeJavaFileWrapper(String text) {
+        public TempClassWrapper(String text) {
             super(URI.create("myfake:/Test.java"), JavaFileObject.Kind.SOURCE);
             this.text = "class Test { Object value = String.valueOf(" + text + "); }";
         }
