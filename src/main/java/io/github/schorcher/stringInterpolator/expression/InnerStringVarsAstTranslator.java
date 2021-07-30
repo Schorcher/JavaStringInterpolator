@@ -1,6 +1,6 @@
-package com.github.schorcher.stringInterpolator.expression;
+package io.github.schorcher.stringInterpolator.expression;
 
-import com.github.schorcher.stringInterpolator.StringInterpolation;
+import io.github.schorcher.stringInterpolator.StringInterpolation;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.tree.TreeTranslator;

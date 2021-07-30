@@ -3,14 +3,26 @@ plugins {
     id 'maven'
     id 'maven-publish'
     id 'idea'
+//    id 'signing'
+//    id "org.owasp.dependencycheck" version "6.1.5"
     id "io.freefair.lombok" version "5.3.3.3"
 }
 
-group 'com.github.schorcher.stringInterpolator'
-version '1.0-DEV'
+group 'io.github.schorcher.stringInterpolator'
+version = 'dev'
+description = "A Java String Interpolation annotation processor"
+
+boolean isReleaseVersion = !version.toString().endsWith("SNAPSHOT")
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
 
 repositories {
+    mavenLocal()
     mavenCentral()
+    maven { url "https://repo.maven.apache.org/maven2" }
 }
 
 dependencies {
@@ -22,3 +34,13 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+    options.compilerArgs += ["-parameters"]
+}
+
+//signing {
+//    useGpgCmd()
+//    sign(publishing.publications["JavaStringInterpolator"])
+//}

@@ -1,4 +1,4 @@
-package com.github.schorcher.stringInterpolator.expression;
+package io.github.schorcher.stringInterpolator.expression;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

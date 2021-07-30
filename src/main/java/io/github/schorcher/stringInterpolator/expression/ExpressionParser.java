@@ -1,4 +1,4 @@
-package com.github.schorcher.stringInterpolator.expression;
+package io.github.schorcher.stringInterpolator.expression;
 
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.tools.javac.api.JavacTaskImpl;

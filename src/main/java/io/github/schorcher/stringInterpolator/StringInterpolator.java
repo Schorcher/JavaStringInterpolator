@@ -1,7 +1,7 @@
-package com.github.schorcher.stringInterpolator;
+package io.github.schorcher.stringInterpolator;
 
 
-import com.github.schorcher.stringInterpolator.expression.InnerStringVarsAstTranslator;
+import io.github.schorcher.stringInterpolator.expression.InnerStringVarsAstTranslator;
 import com.sun.source.util.Trees;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import com.sun.tools.javac.tree.JCTree;

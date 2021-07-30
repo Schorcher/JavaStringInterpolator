@@ -1,12 +1,9 @@
-package com.github.schorcher.stringInterpolator.expression;
+package io.github.schorcher.stringInterpolator.expression;
 
 import com.sun.tools.javac.tree.JCTree;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.github.schorcher.stringInterpolator.expression.ExpType.EXPRESSION;
-import static com.github.schorcher.stringInterpolator.expression.ExpType.STRING_LITERAL;
 
 public class ExpUtil {
 
@@ -27,7 +24,7 @@ public class ExpUtil {
             int headIndex = literalValue.indexOf(START, startIndex), offset = originalOffset + headIndex + START.length() + 1;
 
             if (headIndex < 0) {
-                expressions.add(new Expression(literalValue.substring(startIndex), STRING_LITERAL, offset));
+                expressions.add(new Expression(literalValue.substring(startIndex), ExpType.STRING_LITERAL, offset));
                 break;
             }
 
@@ -37,11 +34,11 @@ public class ExpUtil {
 
             String prefix = literalValue.substring(startIndex, headIndex);
             if (!prefix.equals(""))
-                expressions.add(new Expression(prefix, STRING_LITERAL, offset));
+                expressions.add(new Expression(prefix, ExpType.STRING_LITERAL, offset));
 
             String variable = literalValue.substring(headIndex + START.length(), endIndex);
             if (!variable.equals(""))
-                expressions.add(new Expression(variable, EXPRESSION, offset));
+                expressions.add(new Expression(variable, ExpType.EXPRESSION, offset));
 
             startIndex = endIndex + END.length();
         }
