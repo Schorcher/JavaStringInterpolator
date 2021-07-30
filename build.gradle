@@ -3,13 +3,12 @@ plugins {
     id 'maven'
     id 'maven-publish'
     id 'idea'
-//    id 'signing'
-//    id "org.owasp.dependencycheck" version "6.1.5"
+    id 'signing'
     id "io.freefair.lombok" version "5.3.3.3"
 }
 
 group 'io.github.schorcher.stringInterpolator'
-version = 'dev'
+version = '0.8.0-SNAPSHOT'
 description = "A Java String Interpolation annotation processor"
 
 boolean isReleaseVersion = !version.toString().endsWith("SNAPSHOT")
@@ -40,7 +39,53 @@ tasks.withType(JavaCompile) {
     options.compilerArgs += ["-parameters"]
 }
 
-//signing {
-//    useGpgCmd()
-//    sign(publishing.publications["JavaStringInterpolator"])
-//}
+publishing {
+    publications {
+        create("JavaStringInterpolator", MavenPublication.class) {
+            artifactId = 'stringInterpolator'
+            from(components['java'])
+            pom {
+                name.set(rootProject.name)
+                description.set(project.description)
+                url.set("https://github.com/schorcher/JavaStringInterpolator")
+                inceptionYear.set("2021")
+                developers {
+                    developer {
+
+                    }
+                }
+                licenses {
+                    license {
+                        name.set("GNU General Public License v3.0")
+                        url.set("https://github.com/schorcher/JavaStringInterpolator/blob/master/LICENSE")
+                        distribution.set("repo")
+                    }
+                }
+                scm {
+                    url.set("https://github.com/Schorcher/JavaStringInterpolator")
+                    connection.set("scm:git:git@github.com:schorcher/JavaStringInterpolator.git")
+                    developerConnection.set("scm:git:ssh:git@github.com:schorcher/JavaStringInterpolator.git")
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name = "SonatypeOSS"
+            credentials {
+                username = project.hasProperty("sonatypeUsername") ? (project.property("sonatypeUsername") as String) : "N/A"
+                password = project.hasProperty("sonatypePassword") ? (project.property("sonatypePassword") as String) : "N/A"
+            }
+
+            String releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            String snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+            url = isReleaseVersion ? releasesRepoUrl : snapshotsRepoUrl
+        }
+    }
+}
+
+signing {
+    useGpgCmd()
+    sign(publishing.publications["JavaStringInterpolator"])
+}
